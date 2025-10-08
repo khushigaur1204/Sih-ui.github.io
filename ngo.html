@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Carbon NGO Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.1.0/docx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            color: #1e293b;
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid #3b82f6;
+        }
+
+        .header-content h1 {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #1e40af;
+        }
+
+        .header-content p {
+            font-size: 1.1rem;
+            color: #64748b;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-info p {
+            margin-bottom: 5px;
+            color: #475569;
+        }
+
+        .user-info button {
+            background: #3b82f6;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+
+        .user-info button:hover {
+            background: #2563eb;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .plantation-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+        }
+
+        .plantation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-header {
+            padding: 20px;
+            background: #f1f5f9;
+            color: #1e293b;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .card-header h3 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #1e40af;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            text-align: center;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 6px;
+            flex: 1;
+            margin: 0 5px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .detail-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #3b82f6;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .card-footer {
+            padding: 15px 20px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .select-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .select-btn:hover {
+            background: #2563eb;
+        }
+
+        .upload-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            display: none;
+            margin-top: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .section-header h2 {
+            color: #1e40af;
+            font-size: 1.7rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .close-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .close-btn:hover {
+            background: #dc2626;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-section h3 {
+            color: #1e40af;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+            background: white;
+            color: #374151;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group select[multiple] {
+            height: 120px;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+
+        .file-upload {
+            border: 2px dashed #3b82f6;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 5px;
+            background: #f8fafc;
+        }
+
+        .file-upload:hover {
+            background: #f1f5f9;
+        }
+
+        .file-upload i {
+            font-size: 2.2rem;
+            color: #3b82f6;
+            margin-bottom: 10px;
+        }
+
+        .file-list {
+            margin-top: 15px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            background: white;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .file-name {
+            flex-grow: 1;
+            margin-right: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-remove {
+            color: #ef4444;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .submit-section {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed #e2e8f0;
+        }
+
+        .submit-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover {
+            background: #2563eb;
+        }
+
+        .submit-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            margin-top: 15px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress {
+            height: 100%;
+            background: #3b82f6;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .upload-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .user-info {
+                text-align: center;
+                margin-top: 15px;
+            }
+            
+            .card-details {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .detail-item {
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1><i class="fas fa-water"></i> Blue Carbon NGO Dashboard</h1>
+                <p>Coastal Ecosystem Monitoring & Carbon Sequestration Reporting</p>
+            </div>
+            <div class="user-info">
+                <p>Welcome, <strong>Ocean Guardians NGO</strong></p>
+                <p>Last login: Today, 09:45 AM</p>
+                <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </header>
+
+        <section class="plantations-section">
+            <h2 style="margin-bottom: 25px; color: #1e40af; font-size: 1.6rem;">
+                <i class="fas fa-map-marked-alt"></i> Select a Coastal Plantation to Upload Report
+            </h2>
+            <div class="dashboard-grid" id="plantationsGrid">
+                <!-- Plantation cards will be generated by JavaScript -->
+            </div>
+        </section>
+
+        <section class="upload-section" id="uploadSection">
+            <div class="section-header">
+                <h2 id="selectedPlantationName"><i class="fas fa-file-upload"></i> Upload Report for </h2>
+                <button class="close-btn" id="closeUploadBtn"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <form class="upload-form" id="reportForm">
+                <div class="form-section">
+                    <h3><i class="fas fa-info-circle"></i> Project Details</h3>
+                    
+                    <div class="form-group">
+                        <label for="ngoName">NGO Name</label>
+                        <input type="text" id="ngoName" value="Ocean Guardians NGO" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registrationNo">NGO Registration Number</label>
+                        <input type="text" id="registrationNo" placeholder="Enter registration number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactPerson">Contact Person</label>
+                        <input type="text" id="contactPerson" placeholder="Full name of contact person" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactEmail">Contact Email</label>
+                        <input type="email" id="contactEmail" placeholder="Email address" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="plantationName">Plantation Project Name</label>
+                        <input type="text" id="plantationName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reportDate">Report Date</label>
+                        <input type="date" id="reportDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="coastalRegion">Coastal Region</label>
+                        <select id="coastalRegion" required>
+                            <option value="">Select Region</option>
+                            <option value="sundarbans">Sundarbans Mangrove Forest</option>
+                            <option value="gulf">Gulf of Mannar</option>
+                            <option value="andaman">Andaman & Nicobar Islands</option>
+                            <option value="lakshadweep">Lakshadweep Coral Atolls</option>
+                            <option value="konkan">Konkan Coast</option>
+                            <option value="coromandel">Coromandel Coast</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="areaCovered">Area Covered (hectares)</label>
+                        <input type="number" id="areaCovered" step="0.1" min="0" required>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3><i class="fas fa-tree"></i> Plantation Details</h3>
+                    
+                    <div class="form-group">
+                        <label for="treeSpecies">Blue Carbon Tree Species</label>
+                        <select id="treeSpecies" required>
+                            <option value="">Select Species</option>
+                            <option value="mangrove_red">Red Mangrove (Rhizophora mangle)</option>
+                            <option value="mangrove_black">Black Mangrove (Avicennia germinans)</option>
+                            <option value="mangrove_white">White Mangrove (Laguncularia racemosa)</option>
+                            <option value="seagrass">Seagrass (Various species)</option>
+                            <option value="saltmarsh">Saltmarsh Grass (Spartina alterniflora)</option>
+                            <option value="other">Other Blue Carbon Species</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="saplingsPlanted">Number of Saplings Planted</label>
+                        <input type="number" id="saplingsPlanted" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="survivalRate">Survival Rate (%)</label>
+                        <input type="number" id="survivalRate" min="0" max="100" step="0.1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="carbonAbsorbed">Carbon Absorbed (tons CO₂/year)</label>
+                        <input type="number" id="carbonAbsorbed" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="biodiversityImpact">Biodiversity Impact Assessment</label>
+                        <textarea id="biodiversityImpact" placeholder="Describe impact on local biodiversity..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="additionalInfo">Additional Information</label>
+                        <textarea id="additionalInfo" placeholder="Any additional details about the plantation or report..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3><i class="fas fa-file-upload"></i> Supporting Documents & Evidence</h3>
+                    
+                    <div class="form-group">
+                        <label>Satellite Images</label>
+                        <div class="file-upload" id="satelliteUpload">
+                            <i class="fas fa-satellite"></i>
+                            <p>Click to upload satellite images</p>
+                            <p class="file-hint">Supports JPG, PNG (Max 10MB each)</p>
+                        </div>
+                        <div class="file-list" id="satelliteFiles"></div>
+                        <input type="file" id="satelliteInput" multiple accept="image/*" style="display: none;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Field Photos & Data</label>
+                        <div class="file-upload" id="photoUpload">
+                            <i class="fas fa-camera"></i>
+                            <p>Click to upload field photos and data</p>
+                            <p class="file-hint">Supports JPG, PNG, CSV (Max 5MB each)</p>
+                        </div>
+                        <div class="file-list" id="photoFiles"></div>
+                        <input type="file" id="photoInput" multiple accept="image/*,.csv" style="display: none;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Supporting Documents</label>
+                        <div class="file-upload" id="docUpload">
+                            <i class="fas fa-file-pdf"></i>
+                            <p>Click to upload documents</p>
+                            <p class="file-hint">Supports PDF, DOC, XLS (Max 15MB each)</p>
+                        </div>
+                        <div class="file-list" id="docFiles"></div>
+                        <input type="file" id="docInput" multiple accept=".pdf,.doc,.docx,.xls,.xlsx" style="display: none;">
+                    </div>
+                </div>
+                
+                <div class="submit-section">
+                    <button type="submit" class="submit-btn" id="submitReportBtn">
+                        <i class="fas fa-file-word"></i> Generate DOCX Report & Submit
+                    </button>
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress" id="progress"></div>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i> Report generated successfully! Redirecting to regulatory body...
+    </div>
+
+    <script>
+        // Sample coastal plantation data
+        const plantations = [
+            {
+                id: 1,
+                name: "Sundarbans Mangrove Restoration",
+                location: "Sundarbans Delta, West Bengal",
+                area: 120,
+                established: "2020-05-15",
+                trees: 45000,
+                status: "Active",
+                lastReport: "2023-09-20",
+                carbonAbsorbed: 280
+            },
+            {
+                id: 2,
+                name: "Gulf of Mannar Seagrass Project",
+                location: "Gulf of Mannar, Tamil Nadu",
+                area: 85,
+                established: "2021-02-10",
+                trees: 32000,
+                status: "Active",
+                lastReport: "2023-10-05",
+                carbonAbsorbed: 190
+            },
+            {
+                id: 3,
+                name: "Andaman Coastal Forest Initiative",
+                location: "Andaman Islands",
+                area: 150,
+                established: "2019-08-22",
+                trees: 52000,
+                status: "Mature",
+                lastReport: "2023-08-15",
+                carbonAbsorbed: 420
+            },
+            {
+                id: 4,
+                name: "Lakshadweep Coral & Mangrove",
+                location: "Lakshadweep Islands",
+                area: 65,
+                established: "2022-03-30",
+                trees: 24000,
+                status: "Monitoring",
+                lastReport: "2023-11-10",
+                carbonAbsorbed: 150
+            }
+        ];
+
+        // DOM elements
+        const plantationsGrid = document.getElementById('plantationsGrid');
+        const uploadSection = document.getElementById('uploadSection');
+        const selectedPlantationName = document.getElementById('selectedPlantationName');
+        const closeUploadBtn = document.getElementById('closeUploadBtn');
+        const reportForm = document.getElementById('reportForm');
+        const submitReportBtn = document.getElementById('submitReportBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progress = document.getElementById('progress');
+        const notification = document.getElementById('notification');
+        
+        // File upload elements
+        const satelliteUpload = document.getElementById('satelliteUpload');
+        const satelliteInput = document.getElementById('satelliteInput');
+        const satelliteFiles = document.getElementById('satelliteFiles');
+        
+        const photoUpload = document.getElementById('photoUpload');
+        const photoInput = document.getElementById('photoInput');
+        const photoFiles = document.getElementById('photoFiles');
+        
+        const docUpload = document.getElementById('docUpload');
+        const docInput = document.getElementById('docInput');
+        const docFiles = document.getElementById('docFiles');
+        
+        // Current selected plantation
+        let selectedPlantation = null;
+        
+        // Initialize the dashboard
+        function initDashboard() {
+            renderPlantationCards();
+            setupEventListeners();
+        }
+        
+        // Render plantation cards
+        function renderPlantationCards() {
+            plantationsGrid.innerHTML = '';
+            
+            plantations.forEach(plantation => {
+                const card = document.createElement('div');
+                card.className = 'plantation-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <h3><i class="fas fa-tree"></i> ${plantation.name}</h3>
+                        <p>${plantation.location}</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-details">
+                            <div class="detail-item">
+                                <div class="detail-value">${plantation.area}</div>
+                                <div class="detail-label">Hectares</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">${plantation.trees.toLocaleString()}</div>
+                                <div class="detail-label">Trees</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">${plantation.carbonAbsorbed}t</div>
+                                <div class="detail-label">CO₂/Year</div>
+                            </div>
+                        </div>
+                        <p><strong>Established:</strong> ${formatDate(plantation.established)}</p>
+                        <p><strong>Last Report:</strong> ${formatDate(plantation.lastReport)}</p>
+                        <p><strong>Status:</strong> ${getStatusBadge(plantation.status)}</p>
+                    </div>
+                    <div class="card-footer">
+                        <button class="select-btn" data-id="${plantation.id}">
+                            <i class="fas fa-upload"></i> Upload Report
+                        </button>
+                    </div>
+                `;
+                
+                plantationsGrid.appendChild(card);
+            });
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Plantation selection
+            plantationsGrid.addEventListener('click', function(e) {
+                if (e.target.classList.contains('select-btn') || e.target.closest('.select-btn')) {
+                    const btn = e.target.classList.contains('select-btn') ? e.target : e.target.closest('.select-btn');
+                    const plantationId = parseInt(btn.getAttribute('data-id'));
+                    selectPlantation(plantationId);
+                }
+            });
+            
+            // Close upload section
+            closeUploadBtn.addEventListener('click', function() {
+                uploadSection.style.display = 'none';
+                selectedPlantation = null;
+            });
+            
+            // File upload handlers
+            satelliteUpload.addEventListener('click', () => satelliteInput.click());
+            satelliteInput.addEventListener('change', handleFileSelect.bind(null, satelliteInput, satelliteFiles));
+            
+            photoUpload.addEventListener('click', () => photoInput.click());
+            photoInput.addEventListener('change', handleFileSelect.bind(null, photoInput, photoFiles));
+            
+            docUpload.addEventListener('click', () => docInput.click());
+            docInput.addEventListener('change', handleFileSelect.bind(null, docInput, docFiles));
+            
+            // Form submission
+            reportForm.addEventListener('submit', handleFormSubmit);
+            
+            // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    alert('Logged out successfully!');
+                }
+            });
+        }
+        
+        // Select a plantation and show upload section
+        function selectPlantation(plantationId) {
+            selectedPlantation = plantations.find(p => p.id === plantationId);
+            if (selectedPlantation) {
+                selectedPlantationName.textContent = `Upload Report for ${selectedPlantation.name}`;
+                uploadSection.style.display = 'block';
+                
+                // Scroll to upload section
+                uploadSection.scrollIntoView({ behavior: 'smooth' });
+                
+                // Set current date as default
+                document.getElementById('reportDate').valueAsDate = new Date();
+                
+                // Pre-fill some fields based on plantation data
+                document.getElementById('plantationName').value = selectedPlantation.name;
+                document.getElementById('areaCovered').value = selectedPlantation.area;
+            }
+        }
+        
+        // Handle file selection for uploads
+        function handleFileSelect(input, fileListContainer) {
+            fileListContainer.innerHTML = '';
+            
+            for (let i = 0; i < input.files.length; i++) {
+                const file = input.files[i];
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <span class="file-name">${file.name}</span>
+                    <span class="file-size">(${formatFileSize(file.size)})</span>
+                    <span class="file-remove" data-index="${i}"><i class="fas fa-times"></i></span>
+                `;
+                fileListContainer.appendChild(fileItem);
+            }
+            
+            // Add event listeners to remove buttons
+            const removeButtons = fileListContainer.querySelectorAll('.file-remove');
+            removeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    removeFileFromInput(input, index);
+                    handleFileSelect(input, fileListContainer);
+                });
+            });
+        }
+        
+        // Remove a file from input
+        function removeFileFromInput(input, index) {
+            const files = Array.from(input.files);
+            files.splice(index, 1);
+            
+            const dt = new DataTransfer();
+            files.forEach(file => dt.items.add(file));
+            input.files = dt.files;
+        }
+        
+        // Handle form submission
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            // Validate form
+            if (!validateForm()) {
+                return;
+            }
+            
+            // Show progress bar
+            progressBar.style.display = 'block';
+            submitReportBtn.disabled = true;
+            submitReportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating Report...';
+            
+            // Simulate upload progress
+            simulateUploadProgress();
+        }
+        
+        // Validate form
+        function validateForm() {
+            const requiredFields = [
+                'ngoName', 'registrationNo', 'contactPerson', 'contactEmail',
+                'plantationName', 'reportDate', 'coastalRegion', 'areaCovered',
+                'treeSpecies', 'saplingsPlanted', 'survivalRate', 'carbonAbsorbed'
+            ];
+            
+            for (let fieldId of requiredFields) {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    alert(`Please fill in the ${field.labels[0].textContent} field.`);
+                    field.focus();
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        // Simulate upload progress
+        function simulateUploadProgress() {
+            let progressValue = 0;
+            const interval = setInterval(() => {
+                progressValue += Math.random() * 10;
+                if (progressValue >= 100) {
+                    progressValue = 100;
+                    clearInterval(interval);
+                    
+                    // Upload complete
+                    setTimeout(uploadComplete, 500);
+                }
+                progress.style.width = `${progressValue}%`;
+            }, 300);
+        }
+        
+        // Upload complete - generate DOCX and redirect
+   function uploadComplete() {
+    submitReportBtn.innerHTML = '<i class="fas fa-check"></i> Report Submitted!';
+    
+    // Collect form data FIRST
+    const formData = {
+        ngoName: document.getElementById('ngoName').value,
+        registrationNo: document.getElementById('registrationNo').value,
+        contactPerson: document.getElementById('contactPerson').value,
+        contactEmail: document.getElementById('contactEmail').value,
+        plantationName: document.getElementById('plantationName').value,
+        reportDate: document.getElementById('reportDate').value,
+        coastalRegion: document.getElementById('coastalRegion').options[document.getElementById('coastalRegion').selectedIndex].text,
+        areaCovered: document.getElementById('areaCovered').value,
+        treeSpecies: document.getElementById('treeSpecies').options[document.getElementById('treeSpecies').selectedIndex].text,
+        saplingsPlanted: document.getElementById('saplingsPlanted').value,
+        survivalRate: document.getElementById('survivalRate').value,
+        carbonAbsorbed: document.getElementById('carbonAbsorbed').value,
+        biodiversityImpact: document.getElementById('biodiversityImpact').value,
+        additionalInfo: document.getElementById('additionalInfo').value
+    };
+
+    // Generate and download the report file
+    generateSimpleReport();
+    
+    // Send report data to regulator page IMMEDIATELY
+    sendReportToRegulator(formData);
+}
+
+// ADD THIS NEW FUNCTION AFTER uploadComplete() function:
+function sendReportToRegulator(reportData) {
+    try {
+        // Send report data via URL parameters
+        const encodedData = encodeURIComponent(JSON.stringify(reportData));
+        window.location.href = `regulatory.html?report=${encodedData}`;
+        
+    } catch (error) {
+        console.error('Error sending report to regulator:', error);
+        // Fallback: just redirect
+        window.location.href = 'regulatory.html';
+    }
+}
+        
+        // Generate DOCX report
+// Generate CSV report (universally compatible)
+// Simple text file generation - guaranteed to work
+// Simple text file generation - guaranteed to work
+function generateSimpleReport() {
+    // Collect form data
+    const formData = {
+        ngoName: document.getElementById('ngoName').value,
+        registrationNo: document.getElementById('registrationNo').value,
+        contactPerson: document.getElementById('contactPerson').value,
+        contactEmail: document.getElementById('contactEmail').value,
+        plantationName: document.getElementById('plantationName').value,
+        reportDate: document.getElementById('reportDate').value,
+        coastalRegion: document.getElementById('coastalRegion').options[document.getElementById('coastalRegion').selectedIndex].text,
+        areaCovered: document.getElementById('areaCovered').value,
+        treeSpecies: document.getElementById('treeSpecies').options[document.getElementById('treeSpecies').selectedIndex].text,
+        saplingsPlanted: document.getElementById('saplingsPlanted').value,
+        survivalRate: document.getElementById('survivalRate').value,
+        carbonAbsorbed: document.getElementById('carbonAbsorbed').value,
+        biodiversityImpact: document.getElementById('biodiversityImpact').value,
+        additionalInfo: document.getElementById('additionalInfo').value
+    };
+
+    // Create detailed text content
+    const content = `
+BLUE CARBON PROJECT REPORT
+==========================
+
+NGO INFORMATION:
+• NGO Name: ${formData.ngoName}
+• Registration Number: ${formData.registrationNo}
+• Contact Person: ${formData.contactPerson}
+• Contact Email: ${formData.contactEmail}
+
+PROJECT DETAILS:
+• Plantation Name: ${formData.plantationName}
+• Report Date: ${formData.reportDate}
+• Coastal Region: ${formData.coastalRegion}
+• Area Covered: ${formData.areaCovered} hectares
+
+PLANTATION INFORMATION:
+• Tree Species: ${formData.treeSpecies}
+• Saplings Planted: ${formData.saplingsPlanted}
+• Survival Rate: ${formData.survivalRate}%
+• Carbon Absorbed: ${formData.carbonAbsorbed} tons CO₂/year
+
+BIODIVERSITY IMPACT:
+${formData.biodiversityImpact || 'Not provided'}
+
+ADDITIONAL INFORMATION:
+${formData.additionalInfo || 'Not provided'}
+
+SUPPORTING DOCUMENTS:
+• Satellite Images: ${satelliteInput.files.length} file(s)
+• Field Photos: ${photoInput.files.length} file(s)
+• Documents: ${docInput.files.length} file(s)
+
+Report Generated on: ${new Date().toLocaleString()}
+    `;
+
+    // Create and download file with proper method
+    const blob = new Blob([content], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    
+    // Create download link
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.download = `BlueCarbon_Report_${formData.plantationName.replace(/\s+/g, '_')}_${formData.reportDate}.txt`;
+    
+    // Trigger download
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    
+    // Clean up
+    URL.revokeObjectURL(url);
+    
+    // Show success message
+    console.log('Report downloaded successfully!');
+}
+        function getStatusBadge(status) {
+            const statusColors = {
+                'Active': '#10b981',
+                'Monitoring': '#f59e0b',
+                'Mature': '#3b82f6'
+            };
+            return `<span style="color: ${statusColors[status]}">●</span> ${status}`;
+        }
+        
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Initialize the dashboard when page loads
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>
